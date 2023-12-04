@@ -1,8 +1,6 @@
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faEye, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "./Reusable";
@@ -13,6 +11,7 @@ const Favourite = () => {
   const [updatedReason, setUpdatedReason] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
+  const [viewDescriptionIndex, setViewDescriptionIndex] = useState(null); // New state for description visibility
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +56,10 @@ const Favourite = () => {
     navigate("/");
   };
 
+  const toggleDescriptionVisibility = (index) => {
+    setViewDescriptionIndex(viewDescriptionIndex === index ? null : index);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
@@ -71,20 +74,25 @@ const Favourite = () => {
         <li className="grid grid-cols-4 bg-gray-100 p-2 font-bold">
           <div>Sr. No.</div>
           <div style={{ marginLeft: '-100px' }}>Package Name</div>
-          <div>Description</div>
+          <div>Why Favourite?</div>
           <div className="flex items-center justify-center space-x-2">
             Actions
           </div>
         </li>
         {favorites.map((fav, index) => (
-          <li
-            key={index}
-            className="grid grid-cols-4 items-center p-2 border-t"
-          >
+          <li key={index} className="grid grid-cols-4 items-center p-2 border-t">
             <div>{index + 1}</div>
             <div style={{ marginLeft: '-100px' }}>{fav.result}</div>
-            <div>{fav.reason || "No description"}</div>
+            <div>
+              {viewDescriptionIndex === index && <div>{fav.reason || "No description"}</div>}
+            </div>
             <div className="flex items-center justify-center space-x-2">
+            <FontAwesomeIcon
+                icon={faEye}
+                onClick={() => toggleDescriptionVisibility(index)}
+                className="cursor-pointer"
+                title="View Description"
+              />
               <FontAwesomeIcon
                 icon={faEdit}
                 onClick={() => handleToggleEditing(index)}
@@ -97,6 +105,7 @@ const Favourite = () => {
                 className="cursor-pointer"
                 title="Delete"
               />
+          
             </div>
           </li>
         ))}
@@ -110,16 +119,12 @@ const Favourite = () => {
             style={{ width: "400px", height: "180px" }}
           >
             <div className="flex justify-between items-center mb-2">
-              {" "}
               <h3 className="text-lg font-semibold flex items-center">
-                Edit{" "}
-                <span className="ml-2">
-                  <FaEdit />
-                </span>
+                Edit <span className="ml-2"><FontAwesomeIcon icon={faEdit} /></span>
               </h3>
               <FontAwesomeIcon
                 icon={faTimes}
-                onClick={() => handleEditCancel()}
+                onClick={handleEditCancel}
                 className="cursor-pointer"
               />
             </div>
